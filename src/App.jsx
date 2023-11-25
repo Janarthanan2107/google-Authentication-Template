@@ -1,21 +1,39 @@
-import { useState } from "react";
-import {
-  signInWithGooglePopup,
-  createUserDocFromAuth,
-} from "./utils/firebase";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, signInWithGooglePopup, createUserDocFromAuth } from "./utils/firebase";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user] = useAuthState(auth);
+
+  const createUserDocument = async (user) => {
+    if (!user) return;
+    const userDocRef = await createUserDocFromAuth(user);
+    // Do additional user document-related logic if needed
+    return userDocRef;
+  };
+
+  useEffect(() => {
+    const createUserData = async () => {
+      if (user) {
+        await createUserDocument(user); // Pass the user object
+      }
+    };
+
+    createUserData();
+  }, [user]);
 
   const googleHandler = async () => {
-    const { user } = await signInWithGooglePopup();
-    const userDocRef = await createUserDocFromAuth(user);
-    setUser(user);
+    try {
+      const { user } = await signInWithGooglePopup();
+      await createUserDocument(user);
+    } catch (error) {
+      console.error("Error during Google sign-in or user document creation:", error.message);
+      // Handle the error or show a user-friendly message
+    }
   };
 
   const logoutHandler = () => {
-    // Reset the user state to null
-    setUser(null);
+    auth.signOut();
   };
 
   return (
@@ -24,10 +42,7 @@ const App = () => {
         {user ? (
           <>
             <img
-              src={
-                user.photoURL ||
-                "https://kirstymelmedlifecoach.com/wp-content/uploads/2020/10/279-2799324_transparent-guest-png-become-a-member-svg-icon.png"
-              }
+              src={user.photoURL || "https://kirstymelmedlifecoach.com/wp-content/uploads/2020/10/279-2799324_transparent-guest-png-become-a-member-svg-icon.png"}
               alt={user.displayName}
               className="user-image"
             />
