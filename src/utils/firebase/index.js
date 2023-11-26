@@ -10,6 +10,10 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPas
 // 1. getAuth is for authenticating the app for google firebase
 // 2. signInWithPopup is sign in with a popup
 // 3. GoogleAuthProvider will provide the googleAuth function for App
+// 4. createUserWithEmailAndPassword register your account
+// 5. signInWithEmailAndPassword login with registered account
+// 6. onAuthStateChanged backTrack the user which user is logged in or out
+// 7. sign out the user
 
 // fire store database
 import { getFirestore } from "firebase/firestore";
