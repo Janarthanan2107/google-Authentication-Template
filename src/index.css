@@ -28,8 +28,8 @@ body {
   display: flex;
   justify-content: center;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  /* min-width: 320px; */
+  /* min-height: 100vh; */
 }
 
 h1 {
@@ -71,15 +71,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-.g-container {
-  text-align: center;
-}
-
-.user-image {
-  border-radius: 50%;
-  border: 0.5px solid gray;
-  width: 8rem;
-  height: 8rem;
 }

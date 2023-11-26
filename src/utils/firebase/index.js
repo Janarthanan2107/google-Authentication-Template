@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
 
 // *****Note:**** //
 
@@ -39,10 +39,30 @@ const provider = new GoogleAuthProvider();
 // signIn method accepts two arguments that initialized app and google provider
 const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 
+// create user with email and password 
+const createUserForGoogle = async (email, password) => {
+    if (!email && !password) return;
+    return createUserWithEmailAndPassword(auth, email, password)
+
+}
+
+const signInAuthForGoogle = async (email, password) => {
+    if (!email && !password) return;
+    return signInWithEmailAndPassword(auth, email, password)
+}
+
+const signOutUser = () => {
+    return signOut(auth)
+}
+
+const onAuthStateChangeListener = (callback) => {
+    onAuthStateChanged(auth, callback)
+}
+
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 
-const createUserDocFromAuth = async (userAuth) => {
+const createUserDocFromAuth = async (userAuth, additionalInfo = {}) => {
     if (!userAuth) return;
     // // check once your values are returning
     // console.log("user Name:", userAuth.displayName);
@@ -50,7 +70,6 @@ const createUserDocFromAuth = async (userAuth) => {
     // console.log("user photo:", userAuth.photoURL);
 
     const userDocRef = doc(db, "user", userAuth.uid)
-    const { photoURL } = userAuth;
     const userSnapShot = await getDoc(userDocRef)
 
     if (!userSnapShot.exists()) {
@@ -61,8 +80,9 @@ const createUserDocFromAuth = async (userAuth) => {
             await setDoc(userDocRef, {
                 displayName,
                 email,
-                photoURL: photoURL || null, // Use photoURL if available, or null if not
                 createdAt,
+                // adding additional info because we need display name
+                ...additionalInfo
             });
         } catch (err) {
             console.log("Something went wrong!", err.message)
@@ -73,4 +93,5 @@ const createUserDocFromAuth = async (userAuth) => {
 }
 
 
-export { signInWithGooglePopup, createUserDocFromAuth  }
+
+export { signInWithGooglePopup, createUserDocFromAuth, createUserForGoogle, signInAuthForGoogle, signOutUser, onAuthStateChangeListener }
