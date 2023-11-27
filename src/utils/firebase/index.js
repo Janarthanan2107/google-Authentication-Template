@@ -96,6 +96,19 @@ const createUserDocFromAuth = async (userAuth, additionalInfo = {}) => {
     return userDocRef;
 }
 
+const getUserDataFromCollection = async (userAuth) => {
+    const docRef = doc(db, "user", userAuth.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        return docSnap.data();
+    } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+        return null;
+    }
+}
 
 
-export { signInWithGooglePopup, createUserDocFromAuth, createUserForGoogle, signInAuthForGoogle, signOutUser, onAuthStateChangeListener }
+export { signInWithGooglePopup, createUserDocFromAuth, createUserForGoogle, signInAuthForGoogle, signOutUser, onAuthStateChangeListener,getUserDataFromCollection }

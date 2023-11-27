@@ -6,6 +6,7 @@ import {
   createUserDocFromAuth,
   onAuthStateChangeListener,
   signOutUser,
+  getUserDataFromCollection,
 } from "./utils/firebase";
 
 const App = () => {
@@ -18,11 +19,13 @@ const App = () => {
 
   useEffect(() => {
     // adding listener function
-    const unSubscribe = onAuthStateChangeListener((user) => {
-      console.log(user);
+    const unSubscribe = onAuthStateChangeListener(async (user) => {
       setUser(user);
+      console.log(user);
       if (user) {
         createUserDocFromAuth(user);
+        const userData = await getUserDataFromCollection(user);
+        setUser((prevUser) => ({ ...prevUser, ...userData })); // Update user with additional data
       }
     });
 
